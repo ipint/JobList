@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
 class Job extends Model
@@ -68,6 +69,28 @@ class Job extends Model
     public function county(): BelongsTo
     {
         return $this->belongsTo(UkCounty::class, 'county_id');
+    }
+
+    public function scopePubliclyVisible(Builder $query): Builder
+    {
+        return $query
+            ->where('status', 'published')
+            ->whereNotNull('published_at')
+            ->where('published_at', '<=', now())
+            ->where(function (Builder $query): void {
+                $query
+                    ->whereNull('expires_at')
+                    ->orWhere('expires_at', '>', now());
+            });
+    }
+
+    public function isPubliclyVisible(): bool
+    {
+        if ($this->status !== 'published' || blank($this->published_at) || $this->published_at->isFuture()) {
+            return false;
+        }
+
+        return blank($this->expires_at) || $this->expires_at->isFuture();
     }
 
     protected static function generateUniqueSlug(string $title, mixed $ignoreId = null): string

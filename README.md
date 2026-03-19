@@ -115,6 +115,124 @@ Jobs are available in the admin panel at:
 http://localhost:8088/admin/jobs
 ```
 
+## Public Jobs API
+
+The frontend can fetch public jobs from these public endpoints:
+
+```text
+GET http://localhost:8088/api/jobs
+GET http://localhost:8088/api/jobs/{slug}
+```
+
+Only jobs with `status=published`, a valid `published_at`, and no past `expires_at` are returned.
+
+### List Jobs
+
+Endpoint:
+
+```text
+GET /api/jobs
+```
+
+Supported query parameters:
+
+- `search`
+- `county`
+- `department`
+- `employment_type`
+- `work_mode`
+- `experience_level`
+- `featured`
+- `per_page`
+
+Example request:
+
+```text
+http://localhost:8088/api/jobs?search=Laravel&work_mode=remote&featured=1
+```
+
+Example response:
+
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "title": "Senior Laravel Developer",
+      "slug": "senior-laravel-developer-123ab",
+      "reference": "JOB-12345",
+      "company_name": "Northbridge Digital",
+      "department": "Technology",
+      "description": "Job description...",
+      "requirements": "Job requirements...",
+      "benefits": "Job benefits...",
+      "employment_type": "full_time",
+      "work_mode": "remote",
+      "experience_level": "senior",
+      "status": "published",
+      "location": {
+        "county": "Greater London",
+        "county_slug": "greater-london",
+        "city": "London",
+        "postcode": "E1 6AN",
+        "location_name": "London Office"
+      },
+      "salary": {
+        "min": "55000.00",
+        "max": "75000.00",
+        "currency": "GBP",
+        "period": "year",
+        "text": "Competitive salary",
+        "is_visible": true
+      },
+      "application": {
+        "url": "https://example.com/jobs/apply",
+        "email": "jobs@example.com"
+      },
+      "visa_sponsorship_available": false,
+      "right_to_work_required": true,
+      "closing_date": "2026-04-30",
+      "published_at": "2026-03-19T12:00:00+00:00",
+      "expires_at": "2026-04-30T12:00:00+00:00",
+      "is_featured": true,
+      "created_at": "2026-03-19T12:00:00+00:00",
+      "updated_at": "2026-03-19T12:00:00+00:00"
+    }
+  ],
+  "links": {
+    "first": "http://localhost:8088/api/jobs?page=1",
+    "last": "http://localhost:8088/api/jobs?page=3",
+    "prev": null,
+    "next": "http://localhost:8088/api/jobs?page=2"
+  },
+  "meta": {
+    "current_page": 1,
+    "from": 1,
+    "last_page": 3,
+    "path": "http://localhost:8088/api/jobs",
+    "per_page": 12,
+    "to": 12,
+    "total": 30
+  }
+}
+```
+
+### Get Job Details
+
+Endpoint:
+
+```text
+GET /api/jobs/{slug}
+```
+
+Example request:
+
+```text
+http://localhost:8088/api/jobs/senior-laravel-developer-123ab
+```
+
+This returns the same `data` structure for a single job. If the slug does not exist, or the job is not publicly visible, the API returns `404`.
+
 ## Default Local Services
 
 - App URL: `http://localhost:8088`
