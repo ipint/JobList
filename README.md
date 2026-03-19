@@ -233,6 +233,64 @@ http://localhost:8088/api/jobs/senior-laravel-developer-123ab
 
 This returns the same `data` structure for a single job. If the slug does not exist, or the job is not publicly visible, the API returns `404`.
 
+## Next.js Frontend
+
+A separate public frontend has been added under `frontend/`.
+
+It currently includes:
+
+- a jobs cards listing page at `/jobs`
+- keyword search at the top of the listing page
+- left-side filters for county, department, employment type, work mode, and experience level
+- pagination with 10 jobs per page
+- a job advert page at `/jobs/[slug]`
+- server-side fetching from the Laravel public jobs API
+- a bottom-right chat widget powered by Anthropic via a direct API route
+
+### Run the frontend
+
+1. Make sure the Laravel app is running on `http://localhost:8088`
+2. Use Node `22.18.0` to match the target cPanel environment
+3. Open the frontend folder:
+
+```bash
+cd frontend
+```
+
+4. Copy the frontend environment file:
+
+```bash
+cp .env.example .env.local
+```
+
+5. Update `frontend/.env.local` as needed:
+
+```env
+NEXT_PUBLIC_API_BASE_URL=http://localhost:8088
+ANTHROPIC_API_KEY=your_key_here
+ANTHROPIC_MODEL=claude-3-5-sonnet-latest
+```
+
+If you do not want the chat widget yet, you can leave `ANTHROPIC_API_KEY` empty and the jobs pages will still work.
+
+6. Install frontend dependencies:
+
+```bash
+npm install
+```
+
+7. Start Next.js:
+
+```bash
+npm run dev
+```
+
+8. Open:
+
+```text
+http://localhost:3000/jobs
+```
+
 ## Default Local Services
 
 - App URL: `http://localhost:8088`
