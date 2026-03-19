@@ -75,6 +75,27 @@ docker compose exec app php artisan migrate --seed
 docker compose exec app php artisan make:filament-user
 ```
 
+When prompted, you can create the user with:
+
+- Email: `hello@example.com`
+- Password: `Admin@123`
+
+Example:
+
+```text
+ Name:
+ > Admin User
+
+ Email address:
+ > hello@example.com
+
+ Password:
+ > Admin@123
+
+ Password confirmation:
+ > Admin@123
+```
+
 8. Open the admin panel:
 
 ```text
