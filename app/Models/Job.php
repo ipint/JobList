@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 
@@ -13,6 +14,7 @@ class Job extends Model
     use HasFactory;
 
     protected $fillable = [
+        'company_id',
         'title',
         'slug',
         'reference',
@@ -69,6 +71,16 @@ class Job extends Model
     public function county(): BelongsTo
     {
         return $this->belongsTo(UkCounty::class, 'county_id');
+    }
+
+    public function company(): BelongsTo
+    {
+        return $this->belongsTo(Company::class);
+    }
+
+    public function applications(): HasMany
+    {
+        return $this->hasMany(Application::class);
     }
 
     public function scopePubliclyVisible(Builder $query): Builder

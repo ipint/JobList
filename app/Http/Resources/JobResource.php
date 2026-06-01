@@ -14,7 +14,7 @@ class JobResource extends JsonResource
             'title' => $this->title,
             'slug' => $this->slug,
             'reference' => $this->reference,
-            'company_name' => $this->company_name,
+            'company_name' => $this->company?->name ?? $this->company_name,
             'department' => $this->department,
             'description' => $this->description,
             'requirements' => $this->requirements,

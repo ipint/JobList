@@ -2,12 +2,15 @@
 
 namespace App\Filament\Resources\Jobs\Schemas;
 
+use App\Models\Company;
+use App\Models\JobAttribute;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Str;
@@ -21,6 +24,21 @@ class JobForm
                 Section::make('Job details')
                     ->columns(2)
                     ->schema([
+                        Select::make('company_id')
+                            ->label('Company')
+                            ->options(fn (): array => self::companyOptions())
+                            ->searchable()
+                            ->preload()
+                            ->live()
+                            ->required(fn (): bool => count(self::companyOptions()) > 1 || (auth()->user()?->canManageAllCompanies() ?? false))
+                            ->visible(fn (): bool => count(self::companyOptions()) > 1 || (auth()->user()?->canManageAllCompanies() ?? false))
+                            ->afterStateUpdated(function (?int $state, Set $set): void {
+                                if (! $state) {
+                                    return;
+                                }
+
+                                $set('company_name', Company::query()->find($state)?->name);
+                            }),
                         TextInput::make('title')
                             ->required()
                             ->maxLength(255)
@@ -37,14 +55,18 @@ class JobForm
                             ->maxLength(255)
                             ->unique(ignoreRecord: true),
                         TextInput::make('reference')
+                            ->required()
                             ->maxLength(255)
                             ->unique(ignoreRecord: true),
                         TextInput::make('company_name')
+                            ->required(fn (): bool => blank(auth()->user()?->accessibleCompanyIds()) && ! (auth()->user()?->canManageAllCompanies() ?? false))
+                            ->maxLength(255)
+                            ->hidden(fn (): bool => filled(auth()->user()?->accessibleCompanyIds()) || (auth()->user()?->canManageAllCompanies() ?? false)),
+                        Select::make('department')
+                            ->options(fn (): array => JobAttribute::optionsFor('department'))
+                            ->searchable()
                             ->required()
-                            ->maxLength(255),
-                        TextInput::make('department')
-                            ->required()
-                            ->maxLength(255),
+                            ->hidden(fn (Get $get): bool => ! self::isCompanyFieldEnabled('department', $get)),
                         Select::make('status')
                             ->options([
                                 'draft' => 'Draft',
@@ -55,29 +77,17 @@ class JobForm
                             ->default('draft')
                             ->required(),
                         Select::make('employment_type')
-                            ->options([
-                                'full_time' => 'Full-time',
-                                'part_time' => 'Part-time',
-                                'contract' => 'Contract',
-                                'temporary' => 'Temporary',
-                                'internship' => 'Internship',
-                            ])
+                            ->options(fn (): array => JobAttribute::optionsFor('employment_type'))
+                            ->searchable()
                             ->required(),
                         Select::make('work_mode')
-                            ->options([
-                                'on_site' => 'On-site',
-                                'hybrid' => 'Hybrid',
-                                'remote' => 'Remote',
-                            ])
+                            ->options(fn (): array => JobAttribute::optionsFor('work_mode'))
+                            ->searchable()
                             ->required(),
                         Select::make('experience_level')
-                            ->options([
-                                'entry' => 'Entry',
-                                'junior' => 'Junior',
-                                'mid' => 'Mid',
-                                'senior' => 'Senior',
-                                'lead' => 'Lead',
-                            ]),
+                            ->options(fn (): array => JobAttribute::optionsFor('experience_level'))
+                            ->searchable()
+                            ->hidden(fn (Get $get): bool => ! self::isCompanyFieldEnabled('experience_level', $get)),
                         Toggle::make('is_featured')
                             ->label('Featured job')
                             ->default(false),
@@ -97,63 +107,97 @@ class JobForm
                             ->required()
                             ->maxLength(255),
                         TextInput::make('postcode')
-                            ->maxLength(16),
+                            ->required()
+                            ->maxLength(16)
+                            ->hidden(fn (Get $get): bool => ! self::isCompanyFieldEnabled('postcode', $get)),
                         TextInput::make('location_name')
                             ->label('Location display name')
                             ->maxLength(255)
-                            ->placeholder('e.g. Manchester City Centre'),
+                            ->placeholder('e.g. Manchester City Centre')
+                            ->hidden(fn (Get $get): bool => ! self::isCompanyFieldEnabled('location_name', $get)),
                     ]),
                 Section::make('Salary and application')
                     ->columns(2)
                     ->schema([
                         TextInput::make('salary_min')
                             ->numeric()
-                            ->prefix('GBP'),
+                            ->prefix('GBP')
+                            ->hidden(fn (Get $get): bool => ! self::isCompanyFieldEnabled('salary', $get)),
                         TextInput::make('salary_max')
                             ->numeric()
-                            ->prefix('GBP'),
+                            ->prefix('GBP')
+                            ->hidden(fn (Get $get): bool => ! self::isCompanyFieldEnabled('salary', $get)),
                         Select::make('salary_period')
                             ->options([
                                 'year' => 'Per year',
                                 'day' => 'Per day',
                                 'hour' => 'Per hour',
-                            ]),
+                            ])
+                            ->hidden(fn (Get $get): bool => ! self::isCompanyFieldEnabled('salary', $get)),
                         TextInput::make('salary_text')
                             ->maxLength(255)
-                            ->placeholder('e.g. Competitive + bonus'),
+                            ->placeholder('e.g. Competitive + bonus')
+                            ->hidden(fn (Get $get): bool => ! self::isCompanyFieldEnabled('salary', $get)),
                         TextInput::make('application_url')
                             ->url()
-                            ->maxLength(255),
+                            ->maxLength(255)
+                            ->hidden(fn (Get $get): bool => ! self::isCompanyFieldEnabled('application_url', $get)),
                         TextInput::make('application_email')
                             ->email()
-                            ->maxLength(255),
-                        DatePicker::make('closing_date'),
-                        DatePicker::make('expires_at'),
+                            ->maxLength(255)
+                            ->hidden(fn (Get $get): bool => ! self::isCompanyFieldEnabled('application_email', $get)),
+                        DatePicker::make('closing_date')
+                            ->hidden(fn (Get $get): bool => ! self::isCompanyFieldEnabled('closing_date', $get)),
+                        DatePicker::make('expires_at')
+                            ->hidden(fn (Get $get): bool => ! self::isCompanyFieldEnabled('expires_at', $get)),
                     ]),
                 Section::make('Candidate requirements')
                     ->columns(2)
                     ->schema([
                         Toggle::make('visa_sponsorship_available')
                             ->label('Visa sponsorship available')
-                            ->default(false),
+                            ->default(false)
+                            ->hidden(fn (Get $get): bool => ! self::isCompanyFieldEnabled('visa_sponsorship_available', $get)),
                         Toggle::make('right_to_work_required')
                             ->label('Right to work required')
-                            ->default(true),
+                            ->default(true)
+                            ->hidden(fn (Get $get): bool => ! self::isCompanyFieldEnabled('right_to_work_required', $get)),
                         DatePicker::make('published_at'),
                     ]),
                 Section::make('Content')
                     ->schema([
-                        Textarea::make('description')
+                        RichEditor::make('description')
                             ->required()
-                            ->rows(8)
-                            ->columnSpanFull(),
-                        Textarea::make('requirements')
-                            ->rows(6)
-                            ->columnSpanFull(),
-                        Textarea::make('benefits')
-                            ->rows(6)
                             ->columnSpanFull(),
                     ]),
             ]);
+    }
+
+    protected static function isCompanyFieldEnabled(string $field, Get $get): bool
+    {
+        $companyId = $get('company_id') ?: (auth()->user()?->accessibleCompanyIds()[0] ?? null);
+
+        if (! $companyId) {
+            return Company::DEFAULT_JOB_FIELD_SETTINGS[$field] ?? true;
+        }
+
+        $company = Company::query()->find($companyId);
+
+        return $company?->enabledJobFields()[$field] ?? true;
+    }
+
+    protected static function companyOptions(): array
+    {
+        $user = auth()->user();
+
+        return Company::query()
+            ->where('is_active', true)
+            ->when(
+                ! $user?->canManageAllCompanies(),
+                fn ($query) => $query->whereIn('id', $user?->accessibleCompanyIds() ?? []),
+            )
+            ->orderBy('name')
+            ->pluck('name', 'id')
+            ->all();
     }
 }

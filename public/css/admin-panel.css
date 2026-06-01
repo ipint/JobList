@@ -1,0 +1,361 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap");
+@import url("/css/filament/filament/app.css");
+
+:root {
+    --jl-admin-bg: #f9fafb;
+    --jl-admin-panel: #ffffff;
+    --jl-admin-panel-soft: #fcfcfd;
+    --jl-admin-border: #e4e7ec;
+    --jl-admin-border-strong: #d0d5dd;
+    --jl-admin-text: #101828;
+    --jl-admin-heading: #0c111d;
+    --jl-admin-muted: #667085;
+    --jl-admin-muted-strong: #475467;
+    --jl-admin-primary: #465fff;
+    --jl-admin-primary-hover: #3641f5;
+    --jl-admin-primary-soft: #eef4ff;
+    --jl-admin-primary-border: #c2d6ff;
+    --jl-admin-success: #12b76a;
+    --jl-admin-warning: #f79009;
+    --jl-admin-error: #f04438;
+    --jl-admin-radius: 12px;
+    --jl-admin-shadow-xs: 0 1px 2px rgba(16, 24, 40, 0.05);
+    --jl-admin-shadow-sm:
+        0 1px 3px rgba(16, 24, 40, 0.1), 0 1px 2px rgba(16, 24, 40, 0.06);
+    --jl-admin-shadow-md:
+        0 4px 8px -2px rgba(16, 24, 40, 0.1),
+        0 2px 4px -2px rgba(16, 24, 40, 0.06);
+    --font-family:
+        "Outfit", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+}
+
+:root.dark {
+    --jl-admin-bg: #0b1220;
+    --jl-admin-panel: #111827;
+    --jl-admin-panel-soft: #0f172a;
+    --jl-admin-border: #243044;
+    --jl-admin-border-strong: #334155;
+    --jl-admin-text: #e5e7eb;
+    --jl-admin-heading: #f8fafc;
+    --jl-admin-muted: #94a3b8;
+    --jl-admin-muted-strong: #cbd5e1;
+    --jl-admin-primary: #6385ff;
+    --jl-admin-primary-hover: #7b96ff;
+    --jl-admin-primary-soft: rgba(99, 133, 255, 0.16);
+    --jl-admin-primary-border: rgba(123, 150, 255, 0.34);
+    --jl-admin-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.28);
+    --jl-admin-shadow-sm:
+        0 1px 3px rgba(0, 0, 0, 0.32), 0 1px 2px rgba(0, 0, 0, 0.22);
+    --jl-admin-shadow-md:
+        0 18px 40px -18px rgba(0, 0, 0, 0.72),
+        0 8px 18px -12px rgba(0, 0, 0, 0.48);
+}
+
+.fi-select-input.fi-select-icons-only .fi-select-input-options-ctn {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.5rem;
+}
+
+.fi-select-input.fi-select-icons-only .fi-select-input-option {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 9999px;
+    border: 1px solid transparent;
+    margin: 0;
+    min-width: 2.25rem;
+}
+
+.fi-select-input.fi-select-icons-only .fi-select-input-option.fi-selected {
+    border-color: rgba(31, 41, 55, 0.12);
+    background-color: rgba(243, 244, 246, 0.9);
+}
+
+:root.dark
+    .fi-select-input.fi-select-icons-only
+    .fi-select-input-option.fi-selected {
+    border-color: rgba(255, 255, 255, 0.16);
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+html,
+body,
+button,
+input,
+select,
+textarea {
+    font-family: var(--font-family);
+}
+
+body,
+.fi-body {
+    background:
+        radial-gradient(
+            circle at top left,
+            rgba(70, 95, 255, 0.08),
+            transparent 32rem
+        ),
+        linear-gradient(
+            180deg,
+            #fcfcfd 0%,
+            var(--jl-admin-bg) 44%,
+            #f2f4f7 100%
+        );
+    color: var(--jl-admin-text);
+}
+
+:root.dark body,
+:root.dark .fi-body {
+    background:
+        radial-gradient(
+            circle at top left,
+            rgba(99, 133, 255, 0.16),
+            transparent 32rem
+        ),
+        linear-gradient(
+            180deg,
+            #0f172a 0%,
+            var(--jl-admin-bg) 48%,
+            #070b13 100%
+        );
+}
+
+.fi-main {
+    padding-inline: 1.25rem;
+}
+
+.fi-page {
+    gap: 1.25rem;
+}
+
+.fi-header-heading,
+.fi-section-header-heading {
+    color: var(--jl-admin-heading);
+    font-weight: 700;
+    letter-spacing: 0;
+}
+
+.fi-header-subheading,
+.fi-section-header-description {
+    color: var(--jl-admin-muted);
+}
+
+.fi-sidebar {
+    border-inline-end: 1px solid var(--jl-admin-border);
+    background: var(--jl-admin-panel);
+    box-shadow: 0 10px 30px rgba(16, 24, 40, 0.04);
+}
+
+.fi-topbar {
+    border-bottom: 1px solid var(--jl-admin-border);
+    background: rgba(255, 255, 255, 0.94);
+    backdrop-filter: blur(16px);
+    box-shadow: var(--jl-admin-shadow-xs);
+}
+
+:root.dark .fi-topbar {
+    background: rgba(17, 24, 39, 0.92);
+}
+
+.fi-logo {
+    font-weight: 700;
+    color: var(--jl-admin-text);
+    letter-spacing: 0;
+}
+
+.fi-sidebar-header {
+    border-bottom: 1px solid var(--jl-admin-border);
+}
+
+.fi-sidebar-nav {
+    padding: 0.85rem;
+}
+
+.fi-sidebar-group-label {
+    color: var(--jl-admin-muted);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.fi-sidebar-item-btn {
+    border-radius: 10px;
+    color: var(--jl-admin-muted-strong);
+    font-weight: 500;
+    min-height: 2.55rem;
+    transition:
+        background-color 150ms ease,
+        color 150ms ease,
+        box-shadow 150ms ease;
+}
+
+.fi-sidebar-item-active > .fi-sidebar-item-btn,
+.fi-sidebar-item-btn:hover {
+    background: var(--jl-admin-primary-soft);
+    color: var(--jl-admin-primary);
+}
+
+.fi-sidebar-item-active > .fi-sidebar-item-btn {
+    box-shadow: inset 0 0 0 1px var(--jl-admin-primary-border);
+}
+
+.fi-sidebar-item-icon,
+.fi-sidebar-group-icon {
+    color: currentColor;
+}
+
+.fi-ta,
+.fi-section {
+    overflow: visible;
+    border: 1px solid var(--jl-admin-border);
+    border-radius: var(--jl-admin-radius);
+    background: var(--jl-admin-panel);
+    box-shadow: var(--jl-admin-shadow-xs);
+}
+
+.fi-ta-header,
+.fi-section-header {
+    border-bottom-color: var(--jl-admin-border);
+    background: var(--jl-admin-panel);
+}
+
+.fi-ta-table thead,
+.fi-ta-header-cell {
+    background: var(--jl-admin-panel-soft);
+}
+
+.fi-ta-header-cell-label,
+.fi-ta-text {
+    color: var(--jl-admin-muted-strong);
+}
+
+.fi-ta-row {
+    border-color: var(--jl-admin-border);
+}
+
+.fi-ta-row:hover {
+    background: #f9fbff;
+}
+
+:root.dark .fi-ta-row:hover {
+    background: rgba(99, 133, 255, 0.08);
+}
+
+.fi-input-wrp,
+.fi-select-input,
+.fi-fo-file-upload,
+.fi-checkbox-list,
+.fi-radio-list {
+    border-color: var(--jl-admin-border);
+    border-radius: 10px;
+    box-shadow: var(--jl-admin-shadow-xs);
+}
+
+.fi-input-wrp:focus-within {
+    border-color: var(--jl-admin-primary-border);
+    box-shadow: 0 0 0 4px rgba(70, 95, 255, 0.12);
+}
+
+:root.dark .fi-input-wrp:focus-within {
+    box-shadow: 0 0 0 4px rgba(99, 133, 255, 0.18);
+}
+
+.fi-btn {
+    border-radius: 10px;
+    font-weight: 600;
+    letter-spacing: 0;
+}
+
+.fi-btn.fi-color-primary,
+.fi-ac-btn-action.fi-color-primary {
+    background: var(--jl-admin-primary);
+    box-shadow: var(--jl-admin-shadow-xs);
+}
+
+.fi-btn.fi-color-primary:hover,
+.fi-ac-btn-action.fi-color-primary:hover {
+    background: var(--jl-admin-primary-hover);
+}
+
+.fi-badge {
+    border-radius: 999px;
+    font-weight: 600;
+}
+
+.fi-icon-btn {
+    border-radius: 10px;
+}
+
+.fi-dropdown-panel,
+.fi-modal-window {
+    border: 1px solid var(--jl-admin-border);
+    border-radius: var(--jl-admin-radius);
+    box-shadow: var(--jl-admin-shadow-md);
+}
+
+.jl-admin-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.25rem 2rem 1.5rem;
+    color: var(--jl-admin-muted);
+    font-size: 0.875rem;
+    border-top: 1px solid var(--jl-admin-border);
+    background: rgba(255, 255, 255, 0.7);
+}
+
+.fi-simple-layout .jl-admin-footer {
+    width: 100vw;
+    margin-inline: calc(50% - 50vw);
+}
+
+.fi-body-has-sidebar .jl-admin-footer {
+    width: auto;
+    margin-inline: 0;
+}
+
+:root.dark .jl-admin-footer {
+    background: rgba(17, 24, 39, 0.72);
+}
+
+.jl-admin-footer-logo {
+    max-height: 1.75rem;
+    width: auto;
+    object-fit: contain;
+}
+
+@media (min-width: 64rem) {
+    .fi-main,
+    .fi-page-main {
+        max-width: none;
+        width: 100%;
+    }
+
+    .fi-main {
+        padding-inline: 2rem;
+        padding-block: 1.5rem;
+    }
+
+    .fi-main-ctn,
+    .fi-sidebar {
+        transition:
+            margin-inline-start 180ms ease,
+            width 180ms ease,
+            transform 180ms ease;
+    }
+
+    .fi-sidebar {
+        will-change: width, transform;
+    }
+
+    .fi-body-has-sidebar-collapsible-on-desktop .fi-main-ctn {
+        min-width: 0;
+    }
+}

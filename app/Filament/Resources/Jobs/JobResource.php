@@ -13,6 +13,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
 class JobResource extends Resource
@@ -37,6 +38,43 @@ class JobResource extends Resource
     public static function table(Table $table): Table
     {
         return JobsTable::configure($table);
+    }
+
+    public static function canViewAny(): bool
+    {
+        return auth()->user()?->canAccess('jobs', 'view') ?? false;
+    }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()?->canAccess('jobs', 'create') ?? false;
+    }
+
+    public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return auth()->user()?->canAccess('jobs', 'edit') ?? false;
+    }
+
+    public static function canDelete(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return auth()->user()?->canAccess('jobs', 'delete') ?? false;
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $query = parent::getEloquentQuery();
+        $user = auth()->user();
+
+        $query->withCount([
+            'applications',
+            'applications as applications_viewed_count' => fn (Builder $query): Builder => $query->where('status', '!=', 'new'),
+        ]);
+
+        if ($user?->canManageAllCompanies()) {
+            return $query;
+        }
+
+        return $query->whereIn('company_id', $user?->accessibleCompanyIds() ?? []);
     }
 
     public static function getRelations(): array
